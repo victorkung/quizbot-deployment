@@ -38,6 +38,16 @@
   </dl>
 </article>
 
+<ul>
+  <% existing_messages = @the_quiz.messages.order(:created_at) %>
+
+  <% existing_messages.each do |something| %>
+    <li>
+      <%= something.content %>
+    </li>
+  <% end %>
+</ul>
+
 <form action="/insert_message" method="post">
 
   <input type="hidden" id="quiz_id_box" name="query_quiz_id" value="<%= @the_quiz.id %>">
