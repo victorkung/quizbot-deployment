@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root to: "quizzes#index"
+
   # Routes for the Message resource:
 
   # CREATE
