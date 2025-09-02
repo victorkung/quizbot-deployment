@@ -37,3 +37,20 @@
     </dd>
   </dl>
 </article>
+
+<form action="/insert_message" method="post">
+
+  <input type="hidden" id="quiz_id_box" name="query_quiz_id" value="<%= @the_quiz.id %>">
+
+  <div>
+    <label for="content_box">
+      Content
+    </label>
+
+    <textarea id="content_box" name="query_content"></textarea>
+  </div>
+
+  <button type="submit">
+    Create message
+  </button>
+</form>
