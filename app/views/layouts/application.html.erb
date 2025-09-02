@@ -33,6 +33,22 @@
             <li>
               Quizbot
             </li>
+
+            <% if current_user == nil %>
+              <li>
+                <a href="/users/sign_up">Sign up</a>
+              </li>
+              <li>
+                <a href="/users/sign_in">Log in</a>
+              </li>
+
+            <% else %>
+
+              <li>
+                <a href="/users/sign_out">Log out</a>
+              </li>
+
+            <% end %>
           </ul>
         </nav>
       </div>
