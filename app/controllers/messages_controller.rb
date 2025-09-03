@@ -25,6 +25,32 @@ class MessagesController < ApplicationController
 
     if the_message.valid?
       the_message.save
+
+      # Create an AI::Chat
+      chat = AI::Chat.new
+      chat.model = "o4-mini"
+
+      # Initialize it with the correct previous_response_id
+      the_quiz = the_message.quiz
+      most_recent_ai_message = the_quiz.messages.order(:created_at).where({ :role => "assistant" }).last
+      chat.previous_response_id = most_recent_ai_message.prev_model_response_id
+
+      ap chat
+
+      # Set the next user message
+      chat.user(the_message.content)
+
+      # Generate the next AI reply
+      @ai_response = chat.generate!
+
+      # Save it
+      message = Message.new
+      message.prev_model_response_id = chat.previous_response_id
+      message.content = @ai_response
+      message.role = "assistant"
+      message.quiz_id = the_quiz.id
+      message.save
+
       redirect_to("/quizzes/#{the_message.quiz_id}", { :notice => "Message created successfully." })
     else
       redirect_to("/quizzes/#{the_message.quiz_id}", { :alert => the_message.errors.full_messages.to_sentence })
