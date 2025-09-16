@@ -43,6 +43,7 @@ class QuizzesController < ApplicationController
 
       # Generate the third message (model's first question)
       chat = AI::Chat.new
+      chat.model = "gpt-5-nano"
       chat.system(system_message.content)
       chat.user(user_message.content)
 

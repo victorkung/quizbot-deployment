@@ -26,6 +26,17 @@
     </dd>
 
     <dt>
+      Score
+    </dt>
+    <dd>
+      <% if @the_quiz.score.present? %>
+        <%= @the_quiz.score %>
+      <% else %>
+        Not yet complete
+      <% end %>
+    </dd>
+
+    <dt>
       Created at
     </dt>
     <dd>

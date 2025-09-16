@@ -28,28 +28,68 @@ class MessagesController < ApplicationController
 
       # Create an AI::Chat
       chat = AI::Chat.new
-      chat.model = "o4-mini"
+      chat.model = "gpt-5-nano"
 
       # Initialize it with the correct previous_response_id
       the_quiz = the_message.quiz
-      most_recent_ai_message = the_quiz.messages.order(:created_at).where({ :role => "assistant" }).last
-      chat.previous_response_id = most_recent_ai_message.prev_model_response_id
 
-      ap chat
+      most_recent_ai_message = the_quiz.
+        messages.
+        order(:created_at).
+        where({ :role => "assistant" }).
+        last
+
+      chat.previous_response_id = most_recent_ai_message.prev_model_response_id
 
       # Set the next user message
       chat.user(the_message.content)
 
-      # Generate the next AI reply
-      @ai_response = chat.generate!
+      if the_quiz.messages.count >= 8
+        # After the third user response (8 total messages), ask for a score using structured output
 
-      # Save it
-      message = Message.new
-      message.prev_model_response_id = chat.previous_response_id
-      message.content = @ai_response
-      message.role = "assistant"
-      message.quiz_id = the_quiz.id
-      message.save
+        chat.model = "gpt-5-nano"
+
+        # Set up the schema for structured output
+        chat.schema = {
+          type: "object",
+          properties: {
+            score: {
+              type: "number",
+              description: "A decimal score between 0 and 10 representing the user's proficiency, where 0 is no knowledge and 10 is expert level"
+            },
+            explanation: {
+              type: "string",
+              description: "An explanation of why this score was given, and where the user can improve."
+            }
+          },
+          required: ["score", "explanation"],
+          additionalProperties: false
+        }
+
+        score_response = chat.generate!
+
+        scoring_message = Message.new
+        scoring_message.prev_model_response_id = chat.previous_response_id
+        scoring_message.content = score_response.fetch(:explanation)
+        scoring_message.role = "assistant"
+        scoring_message.quiz_id = the_quiz.id
+        scoring_message.save!
+
+        # Save the score to the quiz
+        the_quiz.score = score_response.fetch(:score)
+        the_quiz.save!
+      else
+        # Before the third question & response, generate the next AI reply normally
+        @ai_response = chat.generate!
+
+        # Save it
+        message = Message.new
+        message.prev_model_response_id = chat.previous_response_id
+        message.content = @ai_response
+        message.role = "assistant"
+        message.quiz_id = the_quiz.id
+        message.save
+      end
 
       redirect_to("/quizzes/#{the_message.quiz_id}", { :notice => "Message created successfully." })
     else
