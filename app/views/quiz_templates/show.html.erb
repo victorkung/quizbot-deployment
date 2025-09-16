@@ -41,29 +41,46 @@
   </dl>
 </article>
 
-<ul>
-  <% existing_messages = @the_quiz.messages.order(:created_at) %>
+<article>
+  <ul>
+    <% existing_messages = @the_quiz.messages.order(:created_at) %>
 
-  <% existing_messages.each do |something| %>
+    <% existing_messages.each do |something| %>
+      <li>
+        <dl>
+          <dt>
+            <% if something.role == "system" %>
+              🎩 system
+            <% elsif something.role == "assistant" %>
+              🤖 assistant
+            <% elsif something.role == "user" %>
+              👤 <%= current_user.username %>
+            <% end %>
+          </dt>
+          <dd>
+            <%= something.content %>
+          </dd>
+        </dl>
+      </li>
+    <% end %>
+
     <li>
-      <%= something.content %>
+      <form action="/insert_message" method="post">
+
+        <input type="hidden" id="quiz_id_box" name="query_quiz_id" value="<%= @the_quiz.id %>">
+
+        <div>
+          <label for="content_box" class="visually-hidden">
+            Content
+          </label>
+
+          <textarea id="content_box" name="query_content"></textarea>
+        </div>
+
+        <button type="submit">
+          Respond
+        </button>
+      </form>
     </li>
-  <% end %>
-</ul>
-
-<form action="/insert_message" method="post">
-
-  <input type="hidden" id="quiz_id_box" name="query_quiz_id" value="<%= @the_quiz.id %>">
-
-  <div>
-    <label for="content_box">
-      Content
-    </label>
-
-    <textarea id="content_box" name="query_content"></textarea>
-  </div>
-
-  <button type="submit">
-    Create message
-  </button>
-</form>
+  </ul>
+</article>
