@@ -26,13 +26,6 @@
     </dd>
 
     <dt>
-      Score
-    </dt>
-    <dd>
-      <%= @the_quiz.score %>
-    </dd>
-
-    <dt>
       Created at
     </dt>
     <dd>
@@ -45,20 +38,20 @@
   <ul>
     <% existing_messages = @the_quiz.messages.order(:created_at) %>
 
-    <% existing_messages.each do |something| %>
+    <% existing_messages.each do |a_message| %>
       <li>
         <dl>
           <dt>
-            <% if something.role == "system" %>
+            <% if a_message.role == "system" %>
               🎩 system
-            <% elsif something.role == "assistant" %>
+            <% elsif a_message.role == "assistant" %>
               🤖 assistant
-            <% elsif something.role == "user" %>
+            <% elsif a_message.role == "user" %>
               👤 <%= current_user.username %>
             <% end %>
           </dt>
           <dd>
-            <%= something.content %>
+            <%= a_message.content %>
           </dd>
         </dl>
       </li>

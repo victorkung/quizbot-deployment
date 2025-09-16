@@ -1,7 +1,7 @@
 class QuizzesController < ApplicationController
   def index
     # matching_quizzes = Quiz.where({ :user_id => current_user.id })
-    
+
     matching_quizzes = current_user.quizzes
 
     @list_of_quizzes = matching_quizzes.order({ :created_at => :desc })
@@ -30,7 +30,7 @@ class QuizzesController < ApplicationController
       # Create the first message (system prompt)
 
       chat = AI::Chat.new
-      chat.system("You are an expert in #{the_quiz.topic}. Ask the user three questions to assess their proficiency in that topic. If they answer correctly, ask a harder question next. If they answer incorrectly, ask an easier questio next. At the end, assign a score between 0 and 10.")
+      chat.system("You are an expert in #{the_quiz.topic}. Ask the user three questions to assess their proficiency in that topic. If they answer a question correctly, ask a harder question the next time. If they answer incorrectly, ask an easier question the next time. At the end, assign a score between 0 and 10.")
 
       # Create the second message (user asking to assess proficiency)
 
