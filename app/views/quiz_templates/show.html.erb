@@ -1,6 +1,15 @@
-<h1>
-  Quiz #<%= @the_quiz.id %> details
-</h1>
+<nav aria-label="breadcrumb">
+  <ul>
+    <li>
+      <a href="/">
+        <%= current_user.username %>'s quizzes
+      </a>
+    </li>
+    <li>
+      <%= @the_quiz.topic %>
+    </li>
+  </ul>
+</nav>
 
 <article>
   <div>
