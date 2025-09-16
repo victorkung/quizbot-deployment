@@ -159,6 +159,10 @@ body.pico > footer {
   margin-bottom: 0;
 }
 
+.pico article > ul > li:first-child {
+  border-top: 1px solid var(--pico-muted-border-color);
+}
+
 /* List group action items - similar to Bootstrap */
 .pico article > ul > li > a:only-child {
   display: flex;

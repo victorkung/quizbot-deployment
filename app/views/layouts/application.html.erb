@@ -64,8 +64,13 @@
 
     <main>
       <div class="container-two-thirds">
-        <p class="text-danger"><%= alert %></p>
-        <p class="text-success"><%= notice %></p>
+        <% if alert.present? %>
+          <p class="text-danger"><%= alert %></p>
+        <% end %>
+
+        <% if notice.present? %>
+          <p class="text-success"><%= notice %></p>
+        <% end %>
 
         <%= yield %>
       </div>
