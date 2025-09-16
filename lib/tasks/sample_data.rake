@@ -48,7 +48,7 @@ task({ sample_data: :environment }) do
       system_message = Message.new
       system_message.quiz_id = quiz.id
       system_message.role = "system"
-      system_message.content = "You are a #{quiz.topic} tutor. Ask the user five questions to assess their #{quiz.topic} proficiency. Start with an easy question. After each answer, increase or decrease the difficulty of the next question based on how well the user answered. In the end, provide a score between 0 and 10."
+      system_message.content = "You are an expert #{quiz.topic} tutor. Ask the user five questions to assess their proficiency in #{quiz.topic}. Start with an easy question. After each answer, increase or decrease the difficulty of the next question based on how well the user answered. In the end, provide a score between 0 and 10."
       system_message.save
 
       # Create the user message to start the conversation
