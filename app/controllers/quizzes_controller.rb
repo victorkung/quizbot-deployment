@@ -28,24 +28,32 @@ class QuizzesController < ApplicationController
       the_quiz.save
 
       # Create the first message (system prompt)
-
-      chat = AI::Chat.new
-      chat.system("You are an expert in #{the_quiz.topic}. Ask the user three questions to assess their proficiency in that topic. If they answer a question correctly, ask a harder question the next time. If they answer incorrectly, ask an easier question the next time. At the end, assign a score between 0 and 10.")
+      system_message = Message.new
+      system_message.quiz_id = the_quiz.id
+      system_message.role = "system"
+      system_message.content = "You are an expert in #{the_quiz.topic}. Ask the user three questions to assess their proficiency in that topic. If they answer a question correctly, ask a harder question the next time. If they answer incorrectly, ask an easier question the next time. At the end, assign a score between 0 and 10."
+      system_message.save
 
       # Create the second message (user asking to assess proficiency)
+      user_message = Message.new
+      user_message.quiz_id = the_quiz.id
+      user_message.role = "user"
+      user_message.content = "Please assess my proficiency in #{the_quiz.topic}."
+      user_message.save
 
-      chat.user("Please assess my proficiency in #{the_quiz.topic}.")
-
-      # Create the third message (model's first question)
+      # Generate the third message (model's first question)
+      chat = AI::Chat.new
+      chat.system(system_message.content)
+      chat.user(user_message.content)
 
       @ai_response = chat.generate!
 
-      message = Message.new
-      message.prev_model_response_id = chat.previous_response_id
-      message.content = @ai_response
-      message.role = "assistant"
-      message.quiz_id = the_quiz.id
-      message.save
+      assistant_message = Message.new
+      assistant_message.prev_model_response_id = chat.previous_response_id
+      assistant_message.content = @ai_response
+      assistant_message.role = "assistant"
+      assistant_message.quiz_id = the_quiz.id
+      assistant_message.save
 
       redirect_to("/quizzes/#{the_quiz.id}", { :notice => "Quiz created successfully." })
     else
